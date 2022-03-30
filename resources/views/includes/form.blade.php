@@ -26,7 +26,7 @@
                 <select class="form-control" id="category" name="category_id">
                     <option value="">--</option>
                     @foreach($categories as $category)
-                    <option @if(old('category_id', $post->category_id)==$category->id) selected @endif value="{{ $category->id }}">{{ $category->label }}</option>
+                    <option @if (old('category_id', $post->category_id)==$category->id) selected @endif value="{{ $category->id }}">{{ $category->label }}</option>
                     @endforeach
                 </select>
             </div>
@@ -34,7 +34,7 @@
         <p>Tags</p>
         <div class="form-check form-check-inline">
             @foreach($tags as $tag)
-            <input class="form-check-input" type="checkbox" id="$tag-{{ $tag->id }}" value="$tag-{{ $tag->id }}" name="$tags[]" @if(in_array($tag->id, old($tags))) checked @endif
+            <input class="form-check-input" type="checkbox" id="tag-{{ $tag->id }}" value="{{ $tag->id }}" name="tags[]" @if (in_array($tag->id, old('tags', $post_ids ?? []))) checked @endif>
             <label class="form-check-label mr-3" for="$tag-{{ $tag->id }}">{{ $tag->label }}</label>
             @endforeach
         </div>
