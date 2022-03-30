@@ -10,6 +10,9 @@
         <h1>{{ $post->title }}</h1>
         <p><strong>Contenuto: </strong>{{ $post->content }}</p>
         <p><strong>Creato il: </strong>{{ $post->updated_at }}</p>
+        @foreach ($post->tags as $tag)
+        <div>{{ $tag->label }}</div>
+        @endforeach
     </div>
 </div>
 <div class="container d-flex justify-content-end">
