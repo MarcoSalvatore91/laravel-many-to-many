@@ -52,12 +52,14 @@ class PostController extends Controller
                 'title' => ['required', 'string', 'unique:posts', 'max:50'],
                 'content' => 'string | required',
                 'category_id' => 'nullable',
+                'tags' => 'nullable|exists:tags,id',
             ],
             [
                 'title.required' => 'Il titolo è obbligatorio',
                 'title.unique' => 'Titolo già esistente',
                 'title.max' => 'Il titolo non può contenere piu\' di 50 caratteri',
-                'content.required' => 'La descrizione è obbligatoria'
+                'content.required' => 'La descrizione è obbligatoria',
+                'tags.exists' => 'Il tag inserito non è valido',
             ]
         );
 
@@ -67,6 +69,8 @@ class PostController extends Controller
         $post->fill($data);
         $post->slug = Str::slug($post->title, '-');
         $post->save();
+
+        if (array_key_exists('tags', $data)) $post->tags()->attach($data['tags']);
 
         return redirect()->route('admin.posts.show', $post);
     }
