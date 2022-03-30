@@ -96,9 +96,11 @@ class PostController extends Controller
     {
         $categories = Category::all();
 
+        $post_ids = $post->tags->pluck('id')->toArray();
+
         $tags = Tag::all();
 
-        return view('admin.posts.edit', compact('post', 'categories', 'tags'));
+        return view('admin.posts.edit', compact('post', 'categories', 'tags', 'post_ids'));
     }
 
     /**
@@ -116,12 +118,14 @@ class PostController extends Controller
                 'title' => ['required', 'string', Rule::unique('posts')->ignore($post->id), 'max:50'],
                 'content' => 'string | required',
                 'category_id' => 'nullable',
+                'tags' => 'nullable|exists:tags,id',
             ],
             [
                 'title.required' => 'Il titolo è obbligatorio',
                 'title.unique' => 'Titolo già esistente',
                 'title.max' => 'Il titolo non può contenere piu\' di 50 caratteri',
-                'content.required' => 'La descrizione è obbligatoria'
+                'content.required' => 'La descrizione è obbligatoria',
+                'tags.exists' => 'Il tag inserito non è valido',
             ]
         );
 
@@ -130,6 +134,9 @@ class PostController extends Controller
         $data['slug'] = Str::slug($request->title, '-');
 
         $post->update($data);
+
+        if (!array_key_exists('tags', $data)) $post->tags()->detach();
+        else $post->tags()->sync($data['tags']);
 
         return redirect()->route('admin.posts.show', $post->id);
     }
@@ -142,6 +149,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        if ($post->tags) $post->tags()->detach();
+
         $post->delete();
 
         return redirect()->route('admin.posts.index');
