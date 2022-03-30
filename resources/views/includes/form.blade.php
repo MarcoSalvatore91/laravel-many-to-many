@@ -31,7 +31,14 @@
                 </select>
             </div>
         </div>
-        <div class="form-group">
+        <p>Tags</p>
+        <div class="form-check form-check-inline">
+            @foreach($tags as $tag)
+            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
+            <label class="form-check-label mr-3" for="inlineCheckbox1">{{ $tag->label }}</label>
+            @endforeach
+        </div>
+        <div class="form-group mt-3">
             <label for="image">Immagine</label>
             <input type="text" class="form-control" id="image" name="image" value="{{ old('image', $post->image) }}">
             <small class="form-text text-muted">Inserisci un'immagine</small>
