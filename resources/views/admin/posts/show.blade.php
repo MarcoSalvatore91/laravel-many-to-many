@@ -11,7 +11,7 @@
         <p><strong>Contenuto: </strong>{{ $post->content }}</p>
         <p><strong>Creato il: </strong>{{ $post->updated_at }}</p>
         @foreach ($post->tags as $tag)
-        <div>{{ $tag->label }}</div>
+        <div class="badge" style="background-color:{{ $tag->color }}">{{ $tag->label }}</div>
         @endforeach
     </div>
 </div>
