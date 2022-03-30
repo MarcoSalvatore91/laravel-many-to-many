@@ -34,8 +34,8 @@
         <p>Tags</p>
         <div class="form-check form-check-inline">
             @foreach($tags as $tag)
-            <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-            <label class="form-check-label mr-3" for="inlineCheckbox1">{{ $tag->label }}</label>
+            <input class="form-check-input" type="checkbox" id="$tag-{{ $tag->id }}" value="$tag-{{ $tag->id }}" name="$tags[]" @if(in_array($tag->id, old($tags))) checked @endif
+            <label class="form-check-label mr-3" for="$tag-{{ $tag->id }}">{{ $tag->label }}</label>
             @endforeach
         </div>
         <div class="form-group mt-3">
