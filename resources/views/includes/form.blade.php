@@ -9,7 +9,7 @@
 @endif
 
 @if($post->exists)
-<form class="container" action="{{ route('admin.posts.update', $post->id) }}" method="POST">
+<form class="container" action="{{ route('admin.posts.update', $post->id) }}" method="POST" enctype="multipart/form-data">
     @method('PUT')
     @else
     <form class="container" action="{{ route('admin.posts.store') }}" method="POST" enctype="multipart/form-data">
