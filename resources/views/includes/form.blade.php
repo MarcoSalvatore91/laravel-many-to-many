@@ -12,7 +12,7 @@
 <form class="container" action="{{ route('admin.posts.update', $post->id) }}" method="POST">
     @method('PUT')
     @else
-    <form class="container" action="{{ route('admin.posts.store') }}" method="POST">
+    <form class="container" action="{{ route('admin.posts.store') }}" method="POST" enctype="multipart/form-data">
         @endif
         @csrf
         <div class="row">
@@ -40,7 +40,7 @@
         </div>
         <div class="form-group mt-3">
             <label for="image">Immagine</label>
-            <input type="text" class="form-control" id="image" name="image" value="{{ old('image', $post->image) }}">
+            <input type="file" class="form-control-file" id="image" name="image">
             <small class="form-text text-muted">Inserisci un'immagine</small>
         </div>
         <div class="form-group">
