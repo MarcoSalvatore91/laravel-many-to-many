@@ -4,7 +4,11 @@
 
 <div class="container d-flex">
     <div class="mr-5">
-        <img src="{{ $post->image }}" alt="{{ $post->title }}" width="200px" class="img-fluid">
+        @if ($post->image)
+        <img src="{{ asset("storage/$post->image") }}" alt="{{ $post->title }}" width="200px" class="img-fluid">
+        @else
+        <img src="https://socialistmodernism.com/wp-content/uploads/2017/07/placeholder-image.png?w=640" alt="image-null" width="200px" class="img-fluid">
+        @endif
     </div>
     <div>
         <h1>{{ $post->title }}</h1>
