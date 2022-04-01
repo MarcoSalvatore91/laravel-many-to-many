@@ -7,8 +7,12 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\Category;
 use App\Models\Tag;
+use App\Mail\SendEmail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
@@ -52,6 +56,7 @@ class PostController extends Controller
                 'title' => ['required', 'string', 'unique:posts', 'max:50'],
                 'content' => 'string | required',
                 'category_id' => 'nullable',
+                'image' => 'nullable', 'image',
                 'tags' => 'nullable|exists:tags,id',
             ],
             [
@@ -60,17 +65,27 @@ class PostController extends Controller
                 'title.max' => 'Il titolo non può contenere piu\' di 50 caratteri',
                 'content.required' => 'La descrizione è obbligatoria',
                 'tags.exists' => 'Il tag inserito non è valido',
+                'image.image' => 'Il formato non è valido',
             ]
         );
 
         $data = $request->all();
 
         $post = new Post();
+
+        if (array_key_exists('image', $data)) {
+            $img_url = Storage::put('post_images', $data['image']);
+            $data['image'] = $img_url;
+        }
+
         $post->fill($data);
         $post->slug = Str::slug($post->title, '-');
         $post->save();
 
         if (array_key_exists('tags', $data)) $post->tags()->attach($data['tags']);
+
+        $mail = new SendEmail($post);
+        Mail::to(Auth::user()->email)->send($mail);
 
         return redirect()->route('admin.posts.show', $post);
     }
@@ -118,6 +133,7 @@ class PostController extends Controller
                 'title' => ['required', 'string', Rule::unique('posts')->ignore($post->id), 'max:50'],
                 'content' => 'string | required',
                 'category_id' => 'nullable',
+                'image' => 'nullable', 'image',
                 'tags' => 'nullable|exists:tags,id',
             ],
             [
@@ -126,12 +142,19 @@ class PostController extends Controller
                 'title.max' => 'Il titolo non può contenere piu\' di 50 caratteri',
                 'content.required' => 'La descrizione è obbligatoria',
                 'tags.exists' => 'Il tag inserito non è valido',
+                'image.image' => 'Il formato non è valido',
             ]
         );
 
         $data = $request->all();
 
         $data['slug'] = Str::slug($request->title, '-');
+
+        if (array_key_exists('image', $data)) {
+            if ($post->image) Storage::delete($post->image);
+            $img_url = Storage::put('post_images', $data['image']);
+            $data['image'] = $img_url;
+        }
 
         $post->update($data);
 
@@ -149,6 +172,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+        if ($post->image) Storage::delete($post->image);
+
         if ($post->tags) $post->tags()->detach();
 
         $post->delete();
